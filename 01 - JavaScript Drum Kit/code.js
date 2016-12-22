@@ -1,59 +1,49 @@
 (function DrumKit () {
-      function _getAudioElement (keyCode) {
-        const audioElements = Array.from(document.getElementsByTagName('audio'));
-        const code = keyCode.toString();
-        return audioElements
-          .filter((el) => {
-            return el.getAttribute('data-key') === code;
-          })
-          .shift();
-      }
+  const variables = {
+    className: 'playing',
+    keyEvent: 'keydown',
+    transitionEvent: 'transitionend',
+  };
 
-      function _getDivElement (keyCode) {
-        const divElements = Array.from(document.getElementsByClassName('key'))
-        const code = keyCode.toString();
-        return divElements
-          .filter((el) => {
-            return el.getAttribute('data-key') === code;
-          })
-          .shift();
-      }
+  function _addClass(element, name) {
+    element.classList.add(name);
+  }
 
-      function _addClassTo(element, name) {
-        const classList = element.classList;
-        classList.add(name);
-      }
+  function _removeClass(event) {
+    if (event.propertyName === 'transform') {
+      event.target.classList.remove(variables.className);
+    }
+  }
 
-      function _removeClassFrom(element, name) {
-        setTimeout(() => {
-          const classList = element.classList;
-          classList.remove(name);
-        }, 70);
-      }
-      
-      function _playAudioFor (keyCode) {
-        const audioElement = _getAudioElement(keyCode);
-        if (audioElement !== undefined) {
-          audioElement.play();
-        }
-      }
+  function _attachTransitionListener () {
+    Array
+    .from(document.querySelectorAll('.key'))
+    .forEach((key) => key.addEventListener(variables.transitionEvent, _removeClass));
+  }
 
-      function _toggleClassFor(keyCode) {
-        const divElement = _getDivElement(keyCode);
-        if (divElement !== undefined) {
-          _addClassTo(divElement, 'playing');
-          _removeClassFrom(divElement, 'playing');
-        }
-      }
+  function _playAudioFor (keyCode) {
+    const audioElement = document.querySelector(`audio[data-key="${keyCode}"]`);
+    if (audioElement !== null) {
+      audioElement.currentTime = 0;
+      audioElement.play();
+    }
+  }
 
-      function _initAudio (event) {
-        const keyCode = event.keyCode;
-        _playAudioFor(keyCode);
-        _toggleClassFor(keyCode);
-      }
+  function _toggleClassFor(keyCode) {
+    const divElement = document.querySelector(`div[data-key="${keyCode}"]`);
+    if (divElement !== null) {
+      _addClass(divElement, variables.className);
+      _attachTransitionListener();
+    }
+  }
 
-      function _attachListener () {
-        document.addEventListener('keydown', _initAudio);
-      }
-      _attachListener();
-    }())
+  function _initAudio (event) {
+    _playAudioFor(event.keyCode);
+    _toggleClassFor(event.keyCode);
+  }
+
+  function _attachListener () {
+    document.addEventListener(variables.keyEvent, _initAudio);
+  }
+  _attachListener();
+}());
