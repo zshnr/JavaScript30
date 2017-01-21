@@ -9,16 +9,16 @@
 
     <div class="clock">
       <div class="clock-face">
-        <div class="hand hour-hand"></div>
-        <div class="hand min-hand"></div>
-        <div class="hand second-hand"></div>
+        <div class="hand hour-hand js-hour-hand"></div>
+        <div class="hand min-hand js-minute-hand"></div>
+        <div class="hand second-hand js-second-hand"></div>
       </div>
     </div>
 
 
   <style>
     html {
-      background:#018DED url(http://unsplash.it/1500/1000?image=881&blur=50);
+      background:#018DED;
       background-size:cover;
       font-family:'helvetica neue';
       text-align: center;
@@ -61,13 +61,57 @@
       background:black;
       position: absolute;
       top:50%;
+      transform-origin: 100%; /* changes the pivot point to the right hand end of the element. Default is 50% i.e. middle of the element */
+      transform: rotate(90deg);
+      transition: all .05s;
+      transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
+    }
+
+    .second-hand {
+      background: #333333;
     }
 
   </style>
 
   <script>
+    const CONSTANTS = {
+      totalSecondsInAMinute: 60,
+      totalDegreesInACircle: 360,
+      millisecondsInASecond: 1000,
+      totalHoursOnAClock: 12,
+      offset: 90, // degrees by which we have rotated the element originally
+      date() {
+        return new Date();
+      },
+    };
 
+    function animateClock() {
+      animateSeconds();
+      animateMinutes();
+      animateHours();
+    };
 
+    function animateSeconds () {
+      const secondHandElement = document.querySelector('.js-second-hand');
+      const seconds = CONSTANTS.date().getSeconds();
+      const secondsDegrees = ((seconds / CONSTANTS.totalSecondsInAMinute) * CONSTANTS.totalDegreesInACircle) + CONSTANTS.offset;
+      secondHandElement.style.transform = `rotate(${secondsDegrees}deg)`;
+    };
+
+    function animateMinutes () {
+      const minuteHandElement = document.querySelector('.js-minute-hand');
+      const minutes = CONSTANTS.date().getMinutes();
+      const minutesDegrees = ((minutes / CONSTANTS.totalSecondsInAMinute) * CONSTANTS.totalDegreesInACircle) + CONSTANTS.offset;
+      minuteHandElement.style.transform = `rotate(${minutesDegrees}deg)`;
+    };
+
+    function animateHours() {
+      const hourHandElement = document.querySelector('.js-hour-hand');
+      const hours = CONSTANTS.date().getHours();
+      const hoursDegrees = ((hours/CONSTANTS.totalHoursOnAClock) * CONSTANTS.totalDegreesInACircle) + CONSTANTS.offset ;
+      hourHandElement.style.transform = `rotate(${hoursDegrees}deg)`;
+    };
+    setInterval(animateClock, CONSTANTS.millisecondsInASecond);
   </script>
 </body>
 </html>
