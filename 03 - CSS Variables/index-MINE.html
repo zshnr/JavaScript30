@@ -64,14 +64,14 @@
   <script>
     (function cssVariablesUpdater () {
       // Get the input elements from the DOM that we want to listen to
-      const inputsArray = Array.from(document.querySelectorAll('.js-input'));
+      const inputs = document.querySelectorAll('.js-input');
       // Get root element
       const root = document.querySelector(':root');
       // Attach event listeners to listen for change
-      inputsArray.forEach((input) =>  {
+      inputs.forEach((input) =>  {
         input.addEventListener('input', (e) => {
           // Check if a data-sizing attribute exists, if it does, set its value as the value of variable unit
-          const unit = e.target.attributes['data-sizing'] ? e.target.attributes['data-sizing'].nodeValue : '';
+          const unit = e.target.dataset.sizing || '';
           // Update the relevant css variable for the img
           root.style.setProperty(`--${e.target.name}`, `${e.target.value}${unit}`);
         });
