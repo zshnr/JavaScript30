@@ -9,13 +9,13 @@
 
   <div class="controls">
     <label for="spacing">Spacing:</label>
-    <input type="range" class="js-spacing-input" name="spacing" min="10" max="200" value="10" data-sizing="px">
+    <input type="range" class=" js-input js-spacing-input" name="spacing" min="10" max="200" value="10" data-sizing="px">
 
     <label for="blur">Blur:</label>
-    <input type="range" class="js-blur-input" name="blur" min="0" max="25" value="10" data-sizing="px">
+    <input type="range" class="js-input js-blur-input" name="blur" min="0" max="25" value="10" data-sizing="px">
 
     <label for="base">Base Color</label>
-    <input type="color" class="js-color-input" name="base" value="#ffc600">
+    <input type="color" class="js-input js-color-input" name="base" value="#ffc600">
   </div>
 
   <img class="js-image" src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
@@ -64,19 +64,16 @@
   <script>
     (function cssVariablesUpdater () {
       // Get the input elements from the DOM that we want to listen to
-      const spacingInput = document.querySelector('.js-spacing-input');
-      const blurInput = document.querySelector('.js-blur-input');
-      const colorInput = document.querySelector('.js-color-input');
-      const inputsArray = [spacingInput, blurInput, colorInput];
-      // Get image element
-      const image = document.querySelector('.js-image');
+      const inputsArray = Array.from(document.querySelectorAll('.js-input'));
+      // Get root element
+      const root = document.querySelector(':root');
       // Attach event listeners to listen for change
       inputsArray.forEach((input) =>  {
         input.addEventListener('input', (e) => {
           // Check if a data-sizing attribute exists, if it does, set its value as the value of variable unit
           const unit = e.target.attributes['data-sizing'] ? e.target.attributes['data-sizing'].nodeValue : '';
           // Update the relevant css variable for the img
-          image.style.setProperty(`--${e.target.name}`, `${e.target.value}${unit}`);
+          root.style.setProperty(`--${e.target.name}`, `${e.target.value}${unit}`);
         });
       });
     })()
